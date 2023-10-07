@@ -13,6 +13,8 @@
     <img src='./single-queue and multi-queue.png' />
 </a>
 <br/>
+[图片来源: https://arxiv.org/pdf/1504.07481.pdf](https://arxiv.org/pdf/1504.07481.pdf)
+
 多队列框架是在Linux内核版本`4.x`中引入的。但是由于5.0版本blk-mq是默认的，并且旧的框架被删除了。所有的基于`single-queue`驱动程序都应该重写。
 
 本项目主要为解决在Linux系统中注册SSD设备，因此下面提供一些例子。
@@ -126,18 +128,18 @@ struct request_queue *blk_mq_init_sq_queue(struct blk_mq_tag_set *set,
 ```
 
 其他函数不再赘述，block_dev.c是一个完整的注册块设备的例子，可通过修改其中的capacity设置自己想要的块设备大小。<br/>
-其中capacity是块设备大小，可以随意设置。当前 `(11200 * PAGE_SIZE) >> 9`的大小约为`44.8MB`。若要其他大小可对capacity进行修改。<br/>
+其中capacity是块设备大小，可以随意设置。当前 `(11200 * PAGE_SIZE) >> 9`的大小约为`46MB`。若要其他大小可对capacity进行修改。<br/>
 :no_entry_sign::bell:block_device->data是申请的buffer大小，该buffer的大小不可过大，否则会出现`"Cannot allocate memory"`的错误，最好不要对其进行修改。
 
 ```cpp
  /* Set some random capacity of the device */
     block_device->capacity = (11200 * PAGE_SIZE) >> 9; /* nsectors * SECTOR_SIZE; */
-    /* Allocate corresponding data buffer */
+ /* Allocate corresponding data buffer */
     block_device->data = kmalloc(112 * PAGE_SIZE, GFP_KERNEL);
 ```
 
 ### 测试代码:white_check_mark:
-首先对代码进行编译，然后加载模块`test_block.ko`。
+首先对代码进行编译，然后加载模块`test_blockdev.ko`。
 ```
 sudo make
 sudo insmod test_blockdev.ko
@@ -189,3 +191,7 @@ Disk identifier: 0xd1e7f113
 </a>
 <br/>
 
+下面你可以编写你自己的用户程序对该块设备进行读写操作或者其他操作了:v:
+
+示例代码write_data.c写了一个对blockdev进行读写的demo,可以直接使用。
+# :gift_heart:
