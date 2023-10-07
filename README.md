@@ -20,7 +20,9 @@
 **struct gendisk**<br/>
 gendisk结构是块子系统的核心，在Linux内核2.4中引入。<br/>
 该结构表示一个磁盘设备，并保存所有必要的信息，如设备名称、队列、用户和系统数据。
-```
+
+下面是Linux-5.4.0中的gendisk结构体源代码。
+```cpp
 struct gendisk {
 	/* major、first_minor 和 minors 仅为输入参数，不要直接使用。
 	 * 使用 disk_devt() 和 disk_max_parts()。
@@ -61,6 +63,68 @@ struct gendisk {
 	struct lockdep_map lockdep_map;
 };
 ```
+
+
+内核中提供了用于`分配`、`释放`gendisk和`添加`、`删除`磁盘的函数集，如下所示：
+
+```cpp
+struct gendisk *alloc_disk(int minors) 
+
+void add_disk(struct gendisk *disk) 
+
+void set_capacity(struct gendisk *disk, sector_t size)  
+
+void del_gendisk(struct gendisk *gp) 
+
+void put_disk(struct gendisk *disk) 
+```
+
+gendisk结构的典型初始化例程是设置`磁盘名称`、设置`标志`、初始化`I/O队列`和设置`驱动程序私有数据`。
+
+注册设备函数：
+
+```cpp
+int register_blkdev(unsigned int major, const char * name)
+```
+
+对gendisk操作需要编写特定的操作函数，例如`open`,`close`和`ioctl`操作。
+
+```cpp
+#include <linux/fs.h>
+
+int blockdev_open(struct block_device *dev, fmode_t mode)
+{
+    printk("Device %s opened"\n, dev->bd_disk->disk_name);
+    return 0;
+}
+
+void blockdev_release(struct gendisk *gdisk, fmode_t mode)
+{
+    printk("Device %s closed"\n, dev->bd_disk->disk_name);
+}
+
+int blockdev_ioctl (struct block_device *dev, fmode_t mode, unsigned cmd, unsigned long arg)
+{
+    return -ENOTTY; /* ioctl not supported */
+}
+
+static struct block_device_operations blockdev_ops = {
+    .owner = THIS_MODULE,
+    .open = blockdev_open,
+    .release = blockdev_release,
+    .ioctl = blockdev_ioctl
+};
+```
+
+初始化队列
+
+```cpp
+struct request_queue *blk_mq_init_sq_queue(struct blk_mq_tag_set *set,
+                        const struct blk_mq_ops *ops,
+                        unsigned int queue_depth,
+                        unsigned int set_flags);
+```
+
 ```
 sudo make
 sudo insmod test_blockdev.ko
