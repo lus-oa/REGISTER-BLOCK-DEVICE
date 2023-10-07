@@ -125,7 +125,67 @@ struct request_queue *blk_mq_init_sq_queue(struct blk_mq_tag_set *set,
                         unsigned int set_flags);
 ```
 
+其他函数不再赘述，block_dev.c是一个完整的注册块设备的例子，可通过修改其中的capacity设置自己想要的块设备大小。<br/>
+其中capacity是块设备大小，可以随意设置。当前 `(11200 * PAGE_SIZE) >> 9`的大小约为`44.8MB`。若要其他大小可对capacity进行修改。<br/>
+:no_entry_sign::bell:block_device->data是申请的buffer大小，该buffer的大小不可过大，否则会出现`"Cannot allocate memory"`的错误，最好不要对其进行修改。
+
+```cpp
+ /* Set some random capacity of the device */
+    block_device->capacity = (11200 * PAGE_SIZE) >> 9; /* nsectors * SECTOR_SIZE; */
+    /* Allocate corresponding data buffer */
+    block_device->data = kmalloc(112 * PAGE_SIZE, GFP_KERNEL);
+```
+
+### 测试代码:white_check_mark:
+首先对代码进行编译，然后加载模块`test_block.ko`。
 ```
 sudo make
 sudo insmod test_blockdev.ko
 ```
+
+然后对其进行操作：
+
+```
+$ sudo fdisk /dev/blockdev
+
+Welcome to fdisk (util-linux 2.34).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0xe2a63838.
+
+Command (m for help): o
+Created a new DOS disklabel with disk identifier 0xd1e7f113.
+
+Command (m for help): w 
+The partition table has been altered.
+Syncing disks.
+
+$ sudo fdisk /dev/blockdev
+
+Welcome to fdisk (util-linux 2.34).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): p
+Disk /dev/blockdev: 43.77 MiB, 45875200 bytes, 89600 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xd1e7f113
+```
+
+:smile:如你所见，fdisk将我们的块设备识别为有效的磁盘，并成功地创建了一个id为0xd1e7f113的新的DOS分区表。
+
+:smile:这个分区表存储在驱动程序的内存缓冲区中，在卸载驱动程序之前一直有效。
+
+利用可视化工具也可以看到磁盘中多了一个大小为46MB的块设备：
+<br/>
+<a > 
+    <img src='./blkdev.png' />
+</a>
+<br/>
+
