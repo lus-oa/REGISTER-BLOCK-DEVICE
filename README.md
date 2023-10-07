@@ -138,6 +138,37 @@ struct request_queue *blk_mq_init_sq_queue(struct blk_mq_tag_set *set,
     block_device->data = kmalloc(112 * PAGE_SIZE, GFP_KERNEL);
 ```
 
+### 编写Makefile
+
+```
+BINARY     := test_blockdev
+KERNEL      := /lib/modules/$(shell uname -r)/build
+ARCH        := x86
+C_FLAGS     := -Wall
+KMOD_DIR    := $(shell pwd)
+TARGET_PATH := /lib/modules/$(shell uname -r)/kernel/drivers/char
+
+OBJECTS := blockdev.o
+
+ccflags-y += $(C_FLAGS)
+
+obj-m += $(BINARY).o
+
+$(BINARY)-y := $(OBJECTS)
+
+$(BINARY).ko:
+	make -C $(KERNEL) M=$(KMOD_DIR) modules
+
+install:
+	cp $(BINARY).ko $(TARGET_PATH)
+	depmod -a
+
+clean:
+	rm -f *.ko
+	rm -f *.o
+```
+
+
 ### 测试代码:white_check_mark:
 首先对代码进行编译，然后加载模块`test_blockdev.ko`。
 ```
