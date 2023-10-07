@@ -8,6 +8,7 @@
 
 早期的Linux内核提供了一些调度器，并且设备只支持一个读写请求队列。这是Linux内核块设备框架。<br/>
 现代SSD设备支持快速随机访问，可以处理多个I/O请求。为此，内核支持一个新的框架——具有多个队列的block -mq。
+![](single-queue and multi-queue.png)
 ```
 sudo make
 sudo insmod test_blockdev.ko
