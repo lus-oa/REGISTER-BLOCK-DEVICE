@@ -8,11 +8,8 @@
 
 早期的Linux内核提供了一些调度器，但设备只支持一个读写请求队列。<br/>
 现代SSD设备支持快速随机访问，可以处理多个I/O请求。为此，Linux内核支持一个新的框架——具有多个队列的blk-mq。
-<br/>
-<a > 
-    <img src='./single-queue and multi-queue.png' />
-</a>
-<br/>
+![single-queue and multi-queue](https://github.com/fusemen/block_device/assets/122666739/057aad3b-89ed-497e-baa3-12bb932a9e86)
+
 [图片来源: https://arxiv.org/pdf/1504.07481.pdf](https://arxiv.org/pdf/1504.07481.pdf)
 
 多队列框架是在Linux内核版本`4.x`中引入的。但是由于5.0版本blk-mq是默认的，并且旧的框架被删除了。所有的基于`single-queue`驱动程序都应该重写。
