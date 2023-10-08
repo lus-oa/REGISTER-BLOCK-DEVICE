@@ -1,6 +1,7 @@
 # Linux block device driver :floppy_disk:
 ### 简介
 该项目用于在linux系统(:pushpin:内核版本>=5.3.0）中注册一个块设备。<br/>
+**This project is used to register a block device on a linux system.**<br/>
 这种类型的设备用于访问各种存储硬件类型如`硬盘`，`SSD`等。
 
 ## Linux中的单队列与多队列
