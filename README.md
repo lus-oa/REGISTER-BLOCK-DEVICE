@@ -7,7 +7,7 @@
 最初Linux块设备是为带有旋转磁盘和移动磁头的HDD设计的。这样的硬件不能支持对不同磁盘扇区上不同数据块的并行访问。
 
 早期的Linux内核提供了一些调度器，但设备只支持一个读写请求队列。<br/>
-现代SSD设备支持快速随机访问，可以处理多个I/O请求。为此，Linux内核支持一个新的框架——具有多个队列的blk-mq。
+现代SSD设备支持快速随机访问，可以处理多个I/O请求。为此，Linux内核支持一个新的框架——具有多个队列的blk-mq。<br/>
 ![single-queue and multi-queue](https://github.com/fusemen/block_device/assets/122666739/057aad3b-89ed-497e-baa3-12bb932a9e86)
 
 [图片来源: https://arxiv.org/pdf/1504.07481.pdf](https://arxiv.org/pdf/1504.07481.pdf)
