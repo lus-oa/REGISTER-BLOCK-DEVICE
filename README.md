@@ -125,7 +125,7 @@ struct request_queue *blk_mq_init_sq_queue(struct blk_mq_tag_set *set,
                         unsigned int set_flags);
 ```
 
-其他函数不再赘述，block_dev.c是一个完整的注册块设备的例子，可通过修改其中的capacity设置自己想要的块设备大小。<br/>
+其他函数不再赘述，blockdev.c是一个完整的注册块设备的例子，可通过修改其中的capacity设置自己想要的块设备大小。<br/>
 其中capacity是块设备大小，可以随意设置。当前 `(11200 * PAGE_SIZE) >> 9`的大小约为`46MB`。若要其他大小可对capacity进行修改。<br/>
 :no_entry_sign::bell:block_device->data是申请的buffer大小，该buffer的大小不可过大，否则会出现`"Cannot allocate memory"`的错误，最好不要对其进行修改。
 
