@@ -222,5 +222,5 @@ Disk identifier: 0xd1e7f113
 
 下面你可以编写你自己的用户程序对该块设备进行读写操作或者其他操作了:v:
 
-示例代码write_data.c写了一个对blockdev进行读写的demo,可以直接使用。
+示例代码write_data.c写了一个对blockdev进行读写的example,可以直接使用。
 # :gift_heart:
